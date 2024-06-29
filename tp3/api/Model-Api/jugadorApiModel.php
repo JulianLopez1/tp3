@@ -1,14 +1,16 @@
 <?php
 require_once "api/Model-Api/model.php";
-class jugadorModel extends Model
+
+class jugadorApiModel extends Model
 {
-    function getAll($atr = null, $order= null){
+    function getAll($atr = null, $order = null)
+    {
         //abrimos la conexion;
         $db = $this->createConexion();
-       
-        if(!$atr){
+
+        if (!$atr) {
             $sentencia = $db->prepare("SELECT * FROM jugador");
-        }else{
+        } else {
             $sentencia = $db->prepare("SELECT * FROM jugador order by $atr $order");
         }
         $sentencia->execute();
@@ -44,6 +46,25 @@ class jugadorModel extends Model
             return $jugador;
         } else {
             echo "No se pudo conectar a la base de datos.";
+        }
+    }
+
+    function updateJugador($id,$nombre, $apellido, $club, $representante)
+    {
+        $db = $this->createConexion();
+        $resultado = $db->prepare("UPDATE jugador SET nombre = ?, apellido = ?, club = ?, representante_id= ? WHERE id = ?");
+        $resultado->execute([$nombre, $apellido, $club, $representante, $id]);
+    }
+    function getClub($club)
+    {
+        $db = $this->createConexion();
+        if ($db) {
+            $resultado = $db->prepare("SELECT * FROM jugador WHERE club = ?");
+            $resultado->execute([$club]);
+            $jugadores = $resultado->fetchAll(PDO::FETCH_OBJ);
+            return $jugadores;
+        } else {
+            
         }
     }
 }
